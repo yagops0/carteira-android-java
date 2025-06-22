@@ -1,6 +1,7 @@
 package com.example.carteira;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -31,6 +33,7 @@ import java.util.List;
 
 public class LancamentoActivity extends AppCompatActivity {
 
+    private LancamentoDAO lcdao;
     private Spinner spinnerCategoria;
     private String tipoLancamento;
     private String categoriaSelecionada;
@@ -48,6 +51,30 @@ public class LancamentoActivity extends AppCompatActivity {
             return insets;
         });
         categoriaDAO = new CategoriaDAO(this);
+        lcdao = new LancamentoDAO(this);
+
+        ImageButton ibLancamentos = findViewById(R.id.imageButtonLancamentos);
+        ibLancamentos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent telaHome = new Intent(LancamentoActivity.this, HomeActivity.class);
+                startActivity(telaHome);
+            }
+        });
+
+        ImageView ivRelatorio = findViewById(R.id.imageButtonMoney);
+        ivRelatorio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(LancamentoActivity.this);
+                builder.setTitle("Relatório")
+                        .setMessage(loadRelatorio());
+
+                android.app.AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
 
         ImageButton ibAddCategoria = findViewById(R.id.imageButtonAddCategoria);
         ibAddCategoria.setOnClickListener(new View.OnClickListener() {
@@ -166,6 +193,27 @@ public class LancamentoActivity extends AppCompatActivity {
         lDAO.inserirLancamento(lancamento);
         Toast.makeText(LancamentoActivity.this, "Lançamento Cadastrado", Toast.LENGTH_LONG).show();
         finish();
+    }
+
+    private String loadRelatorio(){
+        int totalEntradas = 0;
+        int totalSaidas = 0;
+        int saldoTotal = 0;
+
+        for (Lancamento l : lcdao.listarLancamentos()){
+            if (l.getTipo().equalsIgnoreCase("Entrada")){
+                totalEntradas += 1;
+            }
+            if (l.getTipo().equalsIgnoreCase("Saída")) {
+                totalSaidas += 1;
+            }
+            saldoTotal += l.getValor();
+        }
+
+        return "Total de Entradas: " + totalEntradas +
+                "\nTotal de Saídas: " + totalSaidas +
+                "\nSaldo Total: R$ " + saldoTotal;
+
     }
 }
 

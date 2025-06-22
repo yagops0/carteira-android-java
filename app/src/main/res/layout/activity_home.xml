@@ -73,7 +73,7 @@
                 app:srcCompat="@drawable/money_bag" />
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/ivRelatorio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
